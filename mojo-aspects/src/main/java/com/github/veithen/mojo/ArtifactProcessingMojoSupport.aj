@@ -37,6 +37,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
+import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.codehaus.plexus.util.StringUtils;
@@ -103,14 +104,12 @@ public aspect ArtifactProcessingMojoSupport {
                 if (StringUtils.isEmpty(version)) {
                     version = getMissingArtifactVersion(artifactItem);
                 }
-                Dependency dependency = new Dependency();
-                dependency.setGroupId(artifactItem.getGroupId());
-                dependency.setArtifactId(artifactItem.getArtifactId());
-                dependency.setVersion(version);
-                dependency.setType(artifactItem.getType());
-                dependency.setClassifier(artifactItem.getClassifier());
-                dependency.setScope(Artifact.SCOPE_COMPILE);
-                Artifact artifact = repositorySystem.createDependencyArtifact(dependency);
+                DefaultArtifactCoordinate artifact = new DefaultArtifactCoordinate();
+                artifact.setGroupId(artifactItem.getGroupId());
+                artifact.setArtifactId(artifactItem.getArtifactId());
+                artifact.setVersion(version);
+                artifact.setExtension(artifactItem.getType());
+                artifact.setClassifier(artifactItem.getClassifier());
                 try {
                     resolvedArtifacts.add(resolver.resolveArtifact(projectBuildingRequest, artifact).getArtifact());
                 } catch (ArtifactResolverException ex) {
