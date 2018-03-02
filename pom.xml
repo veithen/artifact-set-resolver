@@ -30,7 +30,7 @@
 
     <groupId>com.github.veithen.maven</groupId>
     <artifactId>maven</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <url>http://veithen.github.io/maven/</url>
@@ -51,7 +51,7 @@
         <url>https://github.com/veithen/maven/tree/master</url>
         <connection>scm:git:http://github.com/veithen/maven.git</connection>
         <developerConnection>scm:git:https://github.com/veithen/maven.git</developerConnection>
-        <tag>0.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
