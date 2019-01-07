@@ -75,7 +75,7 @@ public aspect ArtifactProcessingMojoSupport {
             }
             AndArtifactFilter filter = new AndArtifactFilter();
             filter.add(new ScopeArtifactFilter(dependencySet.getScope()));
-            filter.add(new IncludeExcludeArtifactFilter(dependencySet.getIncludes(), dependencySet.getExcludes(), null));
+            filter.add(new IncludeExcludeArtifactFilter(dependencySet.getIncludes(), dependencySet.getExcludes()));
             for (Artifact artifact : project.getArtifacts()) {
                 if (filter.include(artifact)) {
                     resolvedArtifacts.add(artifact);

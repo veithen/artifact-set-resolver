@@ -36,15 +36,10 @@ class IncludeExcludeArtifactFilter implements ArtifactFilter
 
     private Collection<ArtifactId> excludes;
 
-    public IncludeExcludeArtifactFilter(Collection<String> includes, Collection<String> excludes, String groupPrefix )
+    public IncludeExcludeArtifactFilter(Collection<String> includes, Collection<String> excludes)
     {
         this.includes = toIds( includes );
         this.excludes = toIds( excludes );
-
-        if ( groupPrefix != null && groupPrefix.length() > 0 )
-        {
-            this.includes.add( new ArtifactId( groupPrefix + "*", "*", "*", "*" ) );
-        }
     }
 
     private static Collection<ArtifactId> toIds( Collection<String> patterns )
