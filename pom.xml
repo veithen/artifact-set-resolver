@@ -25,12 +25,12 @@
     <parent>
         <groupId>com.github.veithen</groupId>
         <artifactId>parent</artifactId>
-        <version>20-SNAPSHOT</version>
+        <version>22-SNAPSHOT</version>
     </parent>
 
     <groupId>com.github.veithen.maven</groupId>
     <artifactId>maven</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <url>http://veithen.github.io/maven/</url>
