@@ -35,7 +35,7 @@
     </defaults>
     <classes>
         <class rootElement="true">
-            <name>Configuration</name>
+            <name>ArtifactSet</name>
             <version>1.0.0+</version>
             <fields>
                 <field>

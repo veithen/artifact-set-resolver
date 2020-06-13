@@ -47,10 +47,7 @@ public aspect ArtifactProcessingMojoSupport {
     private MavenProject ArtifactProcessingMojo.project;
     
     @Parameter
-    private DependencySet ArtifactProcessingMojo.dependencySet;
-
-    @Parameter
-    private ArtifactItem[] ArtifactProcessingMojo.artifacts;
+    private ArtifactSet ArtifactProcessingMojo.artifactSet;
     
     @Parameter
     private Repository[] ArtifactProcessingMojo.repositories;
@@ -69,55 +66,59 @@ public aspect ArtifactProcessingMojoSupport {
 
         Log log = getLog();
 
-        if (dependencySet != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Resolving project dependencies in scope " + dependencySet.getScope());
-            }
-            AndArtifactFilter filter = new AndArtifactFilter();
-            filter.add(new ScopeArtifactFilter(dependencySet.getScope()));
-            filter.add(new IncludeExcludeArtifactFilter(dependencySet.getIncludes(), dependencySet.getExcludes()));
-            for (Artifact artifact : project.getArtifacts()) {
-                if (filter.include(artifact)) {
-                    resolvedArtifacts.add(artifact);
+        if (artifactSet != null) {
+            DependencySet dependencySet = artifactSet.getDependencySet();
+            if (dependencySet != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Resolving project dependencies in scope " + dependencySet.getScope());
+                }
+                AndArtifactFilter filter = new AndArtifactFilter();
+                filter.add(new ScopeArtifactFilter(dependencySet.getScope()));
+                filter.add(new IncludeExcludeArtifactFilter(dependencySet.getIncludes(), dependencySet.getExcludes()));
+                for (Artifact artifact : project.getArtifacts()) {
+                    if (filter.include(artifact)) {
+                        resolvedArtifacts.add(artifact);
+                    }
+                }
+                if (dependencySet.isUseProjectArtifact()) {
+                    resolvedArtifacts.add(project.getArtifact());
                 }
             }
-            if (dependencySet.isUseProjectArtifact()) {
-                resolvedArtifacts.add(project.getArtifact());
-            }
-        }
-        
-        if (artifacts != null && artifacts.length != 0) {
-            DefaultProjectBuildingRequest projectBuildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-            List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>(projectBuildingRequest.getRemoteRepositories());
-            if (repositories != null && repositories.length > 0) {
-                for (Repository repository : repositories) {
+
+            List<ArtifactItem> artifacts = artifactSet.getArtifacts();
+            if (artifacts != null && !artifacts.isEmpty()) {
+                DefaultProjectBuildingRequest projectBuildingRequest = new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
+                List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>(projectBuildingRequest.getRemoteRepositories());
+                if (repositories != null && repositories.length > 0) {
+                    for (Repository repository : repositories) {
+                        try {
+                            remoteRepositories.add(repositorySystem.buildArtifactRepository(repository));
+                        } catch (InvalidRepositoryException ex) {
+                            throw new MojoExecutionException("Invalid repository", ex);
+                        }
+                    }
+                }
+                projectBuildingRequest.setRemoteRepositories(remoteRepositories);
+                for (ArtifactItem artifactItem : artifacts) {
+                    String version = artifactItem.getVersion();
+                    if (StringUtils.isEmpty(version)) {
+                        version = getMissingArtifactVersion(artifactItem);
+                    }
+                    DefaultArtifactCoordinate artifact = new DefaultArtifactCoordinate();
+                    artifact.setGroupId(artifactItem.getGroupId());
+                    artifact.setArtifactId(artifactItem.getArtifactId());
+                    artifact.setVersion(version);
+                    artifact.setExtension(artifactItem.getType());
+                    artifact.setClassifier(artifactItem.getClassifier());
                     try {
-                        remoteRepositories.add(repositorySystem.buildArtifactRepository(repository));
-                    } catch (InvalidRepositoryException ex) {
-                        throw new MojoExecutionException("Invalid repository", ex);
+                        resolvedArtifacts.add(resolver.resolveArtifact(projectBuildingRequest, artifact).getArtifact());
+                    } catch (ArtifactResolverException ex) {
+                        throw new MojoExecutionException("Unable to resolve artifact", ex);
                     }
                 }
             }
-            projectBuildingRequest.setRemoteRepositories(remoteRepositories);
-            for (ArtifactItem artifactItem : artifacts) {
-                String version = artifactItem.getVersion();
-                if (StringUtils.isEmpty(version)) {
-                    version = getMissingArtifactVersion(artifactItem);
-                }
-                DefaultArtifactCoordinate artifact = new DefaultArtifactCoordinate();
-                artifact.setGroupId(artifactItem.getGroupId());
-                artifact.setArtifactId(artifactItem.getArtifactId());
-                artifact.setVersion(version);
-                artifact.setExtension(artifactItem.getType());
-                artifact.setClassifier(artifactItem.getClassifier());
-                try {
-                    resolvedArtifacts.add(resolver.resolveArtifact(projectBuildingRequest, artifact).getArtifact());
-                } catch (ArtifactResolverException ex) {
-                    throw new MojoExecutionException("Unable to resolve artifact", ex);
-                }
-            }
         }
-        
+
         return resolvedArtifacts;
     }
     
