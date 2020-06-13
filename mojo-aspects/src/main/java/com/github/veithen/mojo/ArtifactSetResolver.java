@@ -19,8 +19,13 @@
  */
 package com.github.veithen.mojo;
 
-import org.apache.maven.plugin.Mojo;
+import java.util.List;
 
-public interface ArtifactProcessingMojo extends Mojo {
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Repository;
+import org.apache.maven.project.MavenProject;
 
+public interface ArtifactSetResolver {
+    List<Artifact> resolveArtifactSet(MavenProject project, MavenSession session, ArtifactSet artifactSet, Repository[] repositories) throws ArtifactSetResolverException;
 }

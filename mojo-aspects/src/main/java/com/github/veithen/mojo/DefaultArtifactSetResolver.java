@@ -30,47 +30,37 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Repository;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
 
-public aspect ArtifactProcessingMojoSupport {
-    @Parameter(property="project", required=true, readonly=true)
-    private MavenProject ArtifactProcessingMojo.project;
+@Component(role=ArtifactSetResolver.class, hint="default")
+public class DefaultArtifactSetResolver implements ArtifactSetResolver {
+    @Requirement
+    private RepositorySystem repositorySystem;
     
-    @Parameter
-    private ArtifactSet ArtifactProcessingMojo.artifactSet;
-    
-    @Parameter
-    private Repository[] ArtifactProcessingMojo.repositories;
-    
-    @Parameter(property="session", required=true, readonly=true)
-    private MavenSession ArtifactProcessingMojo.session;
+    @Requirement
+    private ArtifactResolver resolver;
 
-    @Component
-    private RepositorySystem ArtifactProcessingMojo.repositorySystem;
-    
-    @Component
-    private ArtifactResolver ArtifactProcessingMojo.resolver;
+    @Requirement
+    private Logger logger;
 
-    public List<Artifact> ArtifactProcessingMojo.resolveArtifacts() throws MojoExecutionException {
+    @Override
+    public List<Artifact> resolveArtifactSet(MavenProject project, MavenSession session, ArtifactSet artifactSet, Repository[] repositories) throws ArtifactSetResolverException {
         List<Artifact> resolvedArtifacts = new ArrayList<Artifact>();
-
-        Log log = getLog();
 
         if (artifactSet != null) {
             DependencySet dependencySet = artifactSet.getDependencySet();
             if (dependencySet != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Resolving project dependencies in scope " + dependencySet.getScope());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Resolving project dependencies in scope " + dependencySet.getScope());
                 }
                 AndArtifactFilter filter = new AndArtifactFilter();
                 filter.add(new ScopeArtifactFilter(dependencySet.getScope()));
@@ -94,7 +84,7 @@ public aspect ArtifactProcessingMojoSupport {
                         try {
                             remoteRepositories.add(repositorySystem.buildArtifactRepository(repository));
                         } catch (InvalidRepositoryException ex) {
-                            throw new MojoExecutionException("Invalid repository", ex);
+                            throw new ArtifactSetResolverException("Invalid repository", ex);
                         }
                     }
                 }
@@ -102,7 +92,7 @@ public aspect ArtifactProcessingMojoSupport {
                 for (ArtifactItem artifactItem : artifacts) {
                     String version = artifactItem.getVersion();
                     if (StringUtils.isEmpty(version)) {
-                        version = getMissingArtifactVersion(artifactItem);
+                        version = getMissingArtifactVersion(project, artifactItem);
                     }
                     DefaultArtifactCoordinate artifact = new DefaultArtifactCoordinate();
                     artifact.setGroupId(artifactItem.getGroupId());
@@ -113,7 +103,7 @@ public aspect ArtifactProcessingMojoSupport {
                     try {
                         resolvedArtifacts.add(resolver.resolveArtifact(projectBuildingRequest, artifact).getArtifact());
                     } catch (ArtifactResolverException ex) {
-                        throw new MojoExecutionException("Unable to resolve artifact", ex);
+                        throw new ArtifactSetResolverException("Unable to resolve artifact", ex);
                     }
                 }
             }
@@ -122,7 +112,7 @@ public aspect ArtifactProcessingMojoSupport {
         return resolvedArtifacts;
     }
     
-    private String ArtifactProcessingMojo.getMissingArtifactVersion(ArtifactItem artifact) throws MojoExecutionException {
+    private String getMissingArtifactVersion(MavenProject project, ArtifactItem artifact) throws ArtifactSetResolverException {
         List<Dependency> dependencies = project.getDependencies();
         List<Dependency> managedDependencies = project.getDependencyManagement() == null ? null
                 : project.getDependencyManagement().getDependencies();
@@ -137,7 +127,7 @@ public aspect ArtifactProcessingMojoSupport {
             version = findDependencyVersion(artifact, managedDependencies, true);
         }
         if (version == null) {
-            throw new MojoExecutionException(
+            throw new ArtifactSetResolverException(
                 "Unable to find artifact version of " + artifact.getGroupId() + ":" + artifact.getArtifactId()
                     + " in either dependency list or in project's dependency management." );
         } else {
@@ -145,7 +135,7 @@ public aspect ArtifactProcessingMojoSupport {
         }
     }
 
-    private String ArtifactProcessingMojo.findDependencyVersion(ArtifactItem artifact, List<Dependency> dependencies, boolean looseMatch) {
+    private String findDependencyVersion(ArtifactItem artifact, List<Dependency> dependencies, boolean looseMatch) {
         for (Dependency dependency : dependencies) {
             if (StringUtils.equals(dependency.getArtifactId(), artifact.getArtifactId())
                 && StringUtils.equals(dependency.getGroupId(), artifact.getGroupId())
