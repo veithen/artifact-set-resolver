@@ -1,8 +1,8 @@
 /*-
  * #%L
- * Shared Maven utilities
+ * artifact-set-resolver
  * %%
- * Copyright (C) 2014 - 2018 Andreas Veithen
+ * Copyright (C) 2014 - 2020 Andreas Veithen
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package com.github.veithen.mojo;
+package com.github.veithen.maven.shared.artifactset;
 
-import java.util.List;
+public class ArtifactSetResolverException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Repository;
-import org.apache.maven.project.MavenProject;
+    public ArtifactSetResolverException(String message) {
+        super(message);
+    }
 
-public interface ArtifactSetResolver {
-    List<Artifact> resolveArtifactSet(MavenProject project, MavenSession session, ArtifactSet artifactSet, Repository[] repositories) throws ArtifactSetResolverException;
+    public ArtifactSetResolverException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

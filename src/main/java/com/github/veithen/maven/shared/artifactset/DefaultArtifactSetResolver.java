@@ -1,8 +1,8 @@
 /*-
  * #%L
- * Shared Maven utilities
+ * artifact-set-resolver
  * %%
- * Copyright (C) 2014 - 2018 Andreas Veithen
+ * Copyright (C) 2014 - 2020 Andreas Veithen
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package com.github.veithen.mojo;
+package com.github.veithen.maven.shared.artifactset;
 
 import java.util.ArrayList;
 import java.util.List;
