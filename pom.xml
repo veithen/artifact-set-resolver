@@ -97,7 +97,7 @@
             <plugin>
                 <groupId>org.codehaus.modello</groupId>
                 <artifactId>modello-maven-plugin</artifactId>
-                <version>1.8.3</version>
+                <version>1.11</version>
                 <configuration>
                     <version>1.0</version>
                     <models>
