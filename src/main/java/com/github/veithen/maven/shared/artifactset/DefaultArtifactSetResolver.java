@@ -69,6 +69,8 @@ public class DefaultArtifactSetResolver implements ArtifactSetResolver {
                 for (Artifact artifact : project.getArtifacts()) {
                     if (filter.include(artifact)) {
                         resolvedArtifacts.add(artifact);
+                    } else if (logger.isDebugEnabled()) {
+                        logger.debug("Artifact " + artifact.getDependencyConflictId() + " not selected by filter");
                     }
                 }
                 if (dependencySet.isUseProjectArtifact()) {
