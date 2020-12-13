@@ -29,7 +29,7 @@
 
     <groupId>com.github.veithen.maven.shared</groupId>
     <artifactId>artifact-set-resolver</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
 
     <url>http://veithen.github.io/artifact-set-resolver/</url>
     <inceptionYear>2014</inceptionYear>
@@ -45,7 +45,7 @@
         <url>https://github.com/veithen/artifact-set-resolver/tree/master</url>
         <connection>scm:git:http://github.com/veithen/artifact-set-resolver.git</connection>
         <developerConnection>scm:git:https://github.com/veithen/artifact-set-resolver.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>0.2.0</tag>
     </scm>
 
     <properties>
