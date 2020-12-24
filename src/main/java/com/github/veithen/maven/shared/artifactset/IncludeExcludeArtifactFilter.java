@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,61 +25,48 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import java.util.Collection;
 import java.util.HashSet;
 
-/**
- * An artifact filter for full include and exclude.
- * Derived from code in the maven-shade-plugin.
- */
-class IncludeExcludeArtifactFilter implements ArtifactFilter
-{
+/** An artifact filter for full include and exclude. Derived from code in the maven-shade-plugin. */
+class IncludeExcludeArtifactFilter implements ArtifactFilter {
 
     private Collection<ArtifactId> includes;
 
     private Collection<ArtifactId> excludes;
 
-    public IncludeExcludeArtifactFilter(Collection<String> includes, Collection<String> excludes)
-    {
-        this.includes = toIds( includes );
-        this.excludes = toIds( excludes );
+    public IncludeExcludeArtifactFilter(Collection<String> includes, Collection<String> excludes) {
+        this.includes = toIds(includes);
+        this.excludes = toIds(excludes);
     }
 
-    private static Collection<ArtifactId> toIds( Collection<String> patterns )
-    {
+    private static Collection<ArtifactId> toIds(Collection<String> patterns) {
         Collection<ArtifactId> result = new HashSet<ArtifactId>();
 
-        if ( patterns != null )
-        {
-            for ( String pattern : patterns )
-            {
-                result.add( new ArtifactId( pattern ) );
+        if (patterns != null) {
+            for (String pattern : patterns) {
+                result.add(new ArtifactId(pattern));
             }
         }
 
         return result;
     }
 
-    public boolean isSelected( Artifact artifact )
-    {
-        return (artifact != null) && isSelected( new ArtifactId(artifact) );
+    public boolean isSelected(Artifact artifact) {
+        return (artifact != null) && isSelected(new ArtifactId(artifact));
     }
 
-    boolean isSelected( ArtifactId id )
-    {
-        return ( includes.isEmpty() || matches( includes, id ) ) && !matches( excludes, id );
+    boolean isSelected(ArtifactId id) {
+        return (includes.isEmpty() || matches(includes, id)) && !matches(excludes, id);
     }
 
-    private boolean matches( Collection<ArtifactId> patterns, ArtifactId id )
-    {
-        for ( ArtifactId pattern : patterns )
-        {
-            if ( id.matches( pattern ) )
-            {
+    private boolean matches(Collection<ArtifactId> patterns, ArtifactId id) {
+        for (ArtifactId pattern : patterns) {
+            if (id.matches(pattern)) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean include( Artifact artifact ) {
+    public boolean include(Artifact artifact) {
         return isSelected(artifact);
     }
 }
