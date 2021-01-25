@@ -50,7 +50,7 @@
 
     <properties>
         <github.repository>artifact-set-resolver</github.repository>
-        <javaVersion>1.7</javaVersion>
+        <javaVersion>1.8</javaVersion>
     </properties>
 
     <dependencies>
