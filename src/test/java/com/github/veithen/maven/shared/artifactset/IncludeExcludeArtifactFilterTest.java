@@ -19,14 +19,14 @@
  */
 package com.github.veithen.maven.shared.artifactset;
 
-import static com.google.common.truth.Truth.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IncludeExcludeArtifactFilterTest {
     @Test
