@@ -66,6 +66,7 @@ class IncludeExcludeArtifactFilter implements ArtifactFilter {
         return false;
     }
 
+    @Override
     public boolean include(Artifact artifact) {
         return isSelected(artifact);
     }
