@@ -49,15 +49,7 @@ class IncludeExcludeArtifactFilter implements ArtifactFilter {
         return result;
     }
 
-    public boolean isSelected(Artifact artifact) {
-        return (artifact != null) && isSelected(new ArtifactId(artifact));
-    }
-
-    boolean isSelected(ArtifactId id) {
-        return (includes.isEmpty() || matches(includes, id)) && !matches(excludes, id);
-    }
-
-    private boolean matches(Collection<ArtifactId> patterns, ArtifactId id) {
+    private static boolean matches(Collection<ArtifactId> patterns, ArtifactId id) {
         for (ArtifactId pattern : patterns) {
             if (id.matches(pattern)) {
                 return true;
@@ -68,6 +60,10 @@ class IncludeExcludeArtifactFilter implements ArtifactFilter {
 
     @Override
     public boolean include(Artifact artifact) {
-        return isSelected(artifact);
+        if (artifact == null) {
+            return false;
+        }
+        ArtifactId id = new ArtifactId(artifact);
+        return (includes.isEmpty() || matches(includes, id)) && !matches(excludes, id);
     }
 }
