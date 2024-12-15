@@ -152,7 +152,6 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <projectName>artifact-set-resolver</projectName>
-                    <licenseName>apache_v2</licenseName>
                     <extraExtensions>
                         <bsh>java</bsh>
                         <mdo>xml</mdo>
