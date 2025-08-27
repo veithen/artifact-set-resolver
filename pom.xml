@@ -24,13 +24,14 @@
     <parent>
         <groupId>com.github.veithen</groupId>
         <artifactId>parent</artifactId>
-        <version>54</version>
+        <version>55</version>
     </parent>
 
     <groupId>com.github.veithen.maven.shared</groupId>
     <artifactId>artifact-set-resolver</artifactId>
     <version>0.2.1-SNAPSHOT</version>
 
+    <name>artifact-set-resolver</name>
     <url>http://veithen.github.io/artifact-set-resolver/</url>
     <inceptionYear>2014</inceptionYear>
     <licenses>
