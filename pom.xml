@@ -24,7 +24,7 @@
     <parent>
         <groupId>com.github.veithen</groupId>
         <artifactId>parent</artifactId>
-        <version>56</version>
+        <version>57</version>
     </parent>
 
     <groupId>com.github.veithen.maven.shared</groupId>
@@ -51,7 +51,7 @@
 
     <properties>
         <github.repository>artifact-set-resolver</github.repository>
-        <javaVersion>1.8</javaVersion>
+        <javaVersion>11</javaVersion>
         <project.build.outputTimestamp>2021-12-18T17:25:00Z</project.build.outputTimestamp>
     </properties>
 
